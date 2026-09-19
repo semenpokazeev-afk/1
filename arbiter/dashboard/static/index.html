@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 ARBITER — Adaptive Multi-Model Intelligence Router</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">🧠</div>
+        <div class="brand-text">
+          <h2>ARBITER</h2>
+          <span class="badge badge-pulse">v1.0 Router</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="tab-live-feed">
+          <span class="icon">⚡</span>
+          <span>Live Feed</span>
+          <span class="counter-badge" id="feed-count">0</span>
+        </button>
+        <button class="nav-item" data-tab="tab-analytics">
+          <span class="icon">📊</span>
+          <span>Analytics</span>
+        </button>
+        <button class="nav-item" data-tab="tab-bandit">
+          <span class="icon">🎰</span>
+          <span>Bandit Explorer</span>
+        </button>
+        <button class="nav-item" data-tab="tab-health">
+          <span class="icon">🛡️</span>
+          <span>Provider Health</span>
+          <span class="status-dot green" id="health-dot"></span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="ws-status">
+          <span class="indicator connected" id="ws-indicator"></span>
+          <span id="ws-status-text">Connected</span>
+        </div>
+        <div class="quick-stats">
+          <div><small>24h Spend</small><strong id="sb-spend">$0.00</strong></div>
+          <div><small>Requests</small><strong id="sb-requests">0</strong></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header -->
+      <header class="topbar">
+        <div class="header-title">
+          <h1 id="page-title">Real-Time Routing Stream</h1>
+          <p id="page-desc">Live telemetry of AI model routing, costs, and Zero-LLM quality evaluations</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-test-request">
+            <span>🚀 Run Test Query</span>
+          </button>
+          <div class="strategy-badge">
+            <span class="label">Strategy</span>
+            <span class="val" id="active-strategy-label">AUTO (Thompson)</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- TAB 1: Live Feed -->
+      <section id="tab-live-feed" class="tab-pane active">
+        <!-- Live Metrics Bar -->
+        <div class="metrics-grid">
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span>Avg Latency (P50)</span>
+              <span class="metric-icon">⏱️</span>
+            </div>
+            <div class="metric-value" id="val-latency">145 ms</div>
+            <div class="metric-sub">Fastest route active</div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span>Avg Quality Score</span>
+              <span class="metric-icon">⭐</span>
+            </div>
+            <div class="metric-value" id="val-quality">0.92 / 1.0</div>
+            <div class="metric-sub">AST & Semantic Verified</div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span>Forecast Monthly Spend</span>
+              <span class="metric-icon">💰</span>
+            </div>
+            <div class="metric-value" id="val-forecast">$14.20</div>
+            <div class="metric-sub" id="val-forecast-sub">Based on 24h usage</div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span>MAB Exploration Rate</span>
+              <span class="metric-icon">🎲</span>
+            </div>
+            <div class="metric-value" id="val-explore">15.0%</div>
+            <div class="metric-sub">Adaptive decay 72h</div>
+          </div>
+        </div>
+
+        <!-- Feed List -->
+        <div class="card feed-card">
+          <div class="card-header">
+            <h3>Recent Request Pipeline Feed</h3>
+            <span class="auto-scroll-toggle">
+              <input type="checkbox" id="chk-autoscroll" checked>
+              <label for="chk-autoscroll">Auto-scroll</label>
+            </span>
+          </div>
+          <div class="feed-table-container">
+            <table class="data-table" id="feed-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Request ID</th>
+                  <th>Category</th>
+                  <th>Strategy</th>
+                  <th>Selected Model</th>
+                  <th>Latency</th>
+                  <th>Cost</th>
+                  <th>Quality</th>
+                  <th>Feedback</th>
+                </tr>
+              </thead>
+              <tbody id="feed-tbody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: Analytics -->
+      <section id="tab-analytics" class="tab-pane">
+        <div class="analytics-grid">
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3>Win Rates by Model</h3>
+              <small>Selected as optimal arm</small>
+            </div>
+            <div class="chart-container" id="chart-winrates">
+              <!-- Rendered win rate bars -->
+            </div>
+          </div>
+
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3>Cost Breakdown by Category</h3>
+              <small>Last 24 hours</small>
+            </div>
+            <div class="chart-container" id="chart-categories">
+              <!-- Rendered category cost bars -->
+            </div>
+          </div>
+
+          <div class="card table-card full-width">
+            <div class="card-header">
+              <h3>Latency Percentiles (ms)</h3>
+              <small>P50, P95, P99</small>
+            </div>
+            <table class="data-table" id="latency-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Samples</th>
+                  <th>P50 (Median)</th>
+                  <th>P95</th>
+                  <th>P99</th>
+                  <th>Min</th>
+                  <th>Max</th>
+                </tr>
+              </thead>
+              <tbody id="latency-tbody"></tbody>
+            </table>
+          </div>
+
+          <div class="card full-width">
+            <div class="card-header">
+              <h3>Quality Heatmap (Model × Category)</h3>
+            </div>
+            <div class="heatmap-container" id="heatmap-container">
+              <!-- Rendered heatmap matrix -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: Bandit Explorer -->
+      <section id="tab-bandit" class="tab-pane">
+        <div class="bandit-layout">
+          <div class="card bandit-controls-card">
+            <div class="card-header">
+              <h3>Interactive Thompson Sampling Simulator</h3>
+            </div>
+            <div class="simulator-controls">
+              <label for="sim-explore-slider">Exploration Rate (ε): <strong id="sim-explore-val">15%</strong></label>
+              <input type="range" id="sim-explore-slider" min="0" max="50" value="15" step="1">
+              
+              <label for="sim-decay-slider">Decay Half-Life: <strong id="sim-decay-val">72h</strong></label>
+              <input type="range" id="sim-decay-slider" min="6" max="168" value="72" step="6">
+
+              <div class="mab-formula-box">
+                <code>Posterior ~ Beta(α + Σw_pos, β + Σw_neg)</code>
+                <p>Decay prevents obsolescence after LLM provider updates.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card bandit-arms-card">
+            <div class="card-header">
+              <h3>Model Beta-Distribution Curves (PDF)</h3>
+              <small>Probability density functions for task routing</small>
+            </div>
+            <div class="arms-grid" id="arms-container">
+              <!-- Dynamically populated canvas cards for each arm -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: Provider Health -->
+      <section id="tab-health" class="tab-pane">
+        <div class="health-grid" id="health-cards-container">
+          <!-- Dynamically populated provider health tiles -->
+        </div>
+
+        <div class="card test-modal-card">
+          <div class="card-header">
+            <h3>Test Request Console</h3>
+          </div>
+          <div class="test-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Strategy</label>
+                <select id="test-strategy-select">
+                  <option value="auto">auto (Thompson MAB)</option>
+                  <option value="fastest">fastest</option>
+                  <option value="cheapest">cheapest</option>
+                  <option value="quality">quality</option>
+                  <option value="consensus">consensus (Multi-model merge)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Budget Limit ($)</label>
+                <input type="number" id="test-budget-input" placeholder="e.g. 0.05" step="0.01">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Prompt</label>
+              <textarea id="test-prompt-input" rows="3">напиши функцию на python для быстрого поиска подстроки в тексте</textarea>
+            </div>
+            <button class="btn btn-primary" id="btn-submit-test">Execute via /v1/chat/completions</button>
+            <div class="test-result-box" id="test-result-output" style="display:none;"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

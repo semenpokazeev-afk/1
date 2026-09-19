@@ -1,0 +1,45 @@
+# Virtual Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment Variables & Keys
+.env
+.env.local
+*.key
+*.pem
+
+# Database & Local storage
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arbiter trained models cache
+arbiter/classifier/trained_model.joblib
+
+# Hypothesis & testing
+.hypothesis/
+*.log
+
+# Cloudflared & Tunnels
+cloudflared*
+.cloudflared/
+

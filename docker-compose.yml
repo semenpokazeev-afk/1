@@ -1,0 +1,27 @@
+services:
+  arbiter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: arbiter-service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DATABASE_URL=sqlite+aiosqlite:///./data/arbiter.db
+      # Optional API keys for cloud models (uncomment and fill when needed):
+      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      # - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - arbiter_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  arbiter_data:

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: arbiter-intelligence-router
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn arbiter.gateway.app:app --host 0.0.0.0 --port $PORT
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:///./arbiter.db
+      - key: HOST
+        value: 0.0.0.0
+      - key: PYTHON_VERSION
+        value: 3.12.0
