@@ -42,4 +42,6 @@ arbiter/classifier/trained_model.joblib
 # Cloudflared & Tunnels
 cloudflared*
 .cloudflared/
+public_url.txt
+
 
