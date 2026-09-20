@@ -91,6 +91,25 @@ async def get_provider_health() -> List[Dict[str, Any]]:
     return [s.model_dump() for s in statuses]
 
 
+class BanditConfigRequest(BaseModel):
+    exploration_rate: Optional[float] = None
+    decay_half_life_hours: Optional[float] = None
+
+
+@analytics_router.post("/bandit/config")
+async def update_bandit_config(req: BanditConfigRequest) -> Dict[str, Any]:
+    if req.exploration_rate is not None:
+        mab_engine.exploration_rate = max(0.0, min(1.0, req.exploration_rate))
+    if req.decay_half_life_hours is not None:
+        mab_engine.decay_half_life_hours = max(1.0, req.decay_half_life_hours)
+    return {
+        "status": "updated",
+        "exploration_rate": mab_engine.exploration_rate,
+        "decay_half_life_hours": mab_engine.decay_half_life_hours
+    }
+
+
+
 class ReplayRequest(BaseModel):
     request_id: str
     override_strategy: Optional[Strategy] = None

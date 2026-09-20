@@ -216,6 +216,15 @@
                 <code>Posterior ~ Beta(α + Σw_pos, β + Σw_neg)</code>
                 <p>Decay prevents obsolescence after LLM provider updates.</p>
               </div>
+
+              <div id="sim-status-badge" style="margin-top: 12px; font-size: 12px; color: var(--accent-cyan); display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(0, 242, 254, 0.08); border-radius: 6px; border: 1px solid rgba(0, 242, 254, 0.2);">
+                <span>⚡ MAB Router: Live Sync</span>
+                <span id="sim-status-tag" style="font-weight: 600; color: #fff;">ε = 15%</span>
+              </div>
+
+              <button class="btn btn-secondary" id="btn-quick-sample" style="margin-top: 14px; width: 100%; justify-content: center;">
+                <span>🎲 Simulate Request & Update Arms</span>
+              </button>
             </div>
           </div>
 
